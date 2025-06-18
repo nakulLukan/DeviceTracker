@@ -1,0 +1,1 @@
+﻿dotnet ef migrations add <NAME> -c ApplicationDbContext -o Data/Migrations/ --startup-project .\DeviceTracker.Web.csproj
