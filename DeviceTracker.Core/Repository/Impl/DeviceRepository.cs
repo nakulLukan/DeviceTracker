@@ -13,6 +13,13 @@ internal class DeviceRepository : IDeviceRepository
         _dbContext = dbContext.CreateDbContext();
     }
 
+    public Task<IotDevice> GetDeviceByName(string deviceName)
+    {
+        return _dbContext.Devices
+            .Where(x => x.DeviceName == deviceName)
+            .FirstAsync();
+    }
+
     public async Task<IotDevice[]> GetAllDevices(CancellationToken cancellationToken)
     {
         return await _dbContext.Devices
@@ -55,5 +62,10 @@ internal class DeviceRepository : IDeviceRepository
             .Where(metric => metric.DeviceId == device.Id)
             .OrderByDescending(x => x.Instant)
             .ToArrayAsync(cancellationToken);
+    }
+
+    public Task Save()
+    {
+        return _dbContext.SaveChangesAsync();
     }
 }

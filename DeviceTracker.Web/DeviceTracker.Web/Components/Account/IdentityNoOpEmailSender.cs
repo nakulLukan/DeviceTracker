@@ -1,5 +1,4 @@
-using DeviceTracker.Web.Data;
-
+using DeviceTracker.Web.Data.Persistance.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 

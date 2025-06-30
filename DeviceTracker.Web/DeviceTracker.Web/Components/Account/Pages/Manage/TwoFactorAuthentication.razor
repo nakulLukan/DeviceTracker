@@ -1,9 +1,10 @@
 ﻿@page "/Account/Manage/TwoFactorAuthentication"
 
 
+@using DeviceTracker.Web.Data
+@using DeviceTracker.Web.Data.Persistance.Identity
 @using Microsoft.AspNetCore.Http.Features
 @using Microsoft.AspNetCore.Identity
-@using DeviceTracker.Web.Data
 
 @inject UserManager<ApplicationUser> UserManager
 @inject SignInManager<ApplicationUser> SignInManager

@@ -1,8 +1,15 @@
-﻿using DeviceTracker.Core.Constants;
+﻿using DeviceTracker.Core;
+using DeviceTracker.Core.Constants;
 using DeviceTracker.Core.Repository;
+using DeviceTracker.Core.Requests.Device;
+using DeviceTracker.Web.Client.Contracts.Data.Api;
 using DeviceTracker.Web.Components.Account;
-using DeviceTracker.Web.Data;
-
+using DeviceTracker.Web.Data.Api;
+using DeviceTracker.Web.Data.Mqtt;
+using DeviceTracker.Web.Data.Persistance;
+using DeviceTracker.Web.Data.Persistance.Identity;
+using DeviceTracker.Web.Middlewares;
+using MediatR;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +25,20 @@ public static class ServiceRegistry
         AddAuthentication(services);
         AddDbContext(services, configuration);
         AddIdentity(services);
+        AddAppServices(services);
+        AddMediatorLogger(services);
+        services.RegisterCoreServices();
+    }
+
+    private static void AddMediatorLogger(IServiceCollection services)
+    {
+        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+    }
+
+    private static void AddAppServices(IServiceCollection services)
+    {
+        services.AddSingleton(typeof(AppMqttChannel));
+        services.AddTransient<IDeviceDataService, DeviceDataService>();
     }
 
     private static void AddBlazor(IServiceCollection services)

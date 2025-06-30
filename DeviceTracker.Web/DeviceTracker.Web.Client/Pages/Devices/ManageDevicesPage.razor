@@ -1,0 +1,62 @@
+﻿@page "/devices"
+@layout MainLayout
+@inherits AppComponentBase
+@using DeviceTracker.Web.Client.Components.Layout
+@using DeviceTracker.Web.Client.Contracts.Data.Api
+@using System.Collections.ObjectModel
+@inject IDeviceDataService DeviceDataService
+@rendermode InteractiveServer
+
+<AppPage>
+    <MudDataGrid T="DeviceDto"
+        Items="@Devices"
+        SortMode="SortMode.Single"
+        Loading="@_isLoading"
+        Height="100%" 
+        Class="mt-5"
+    Striped
+    Dense
+    Hover
+    Bordered
+    ShowColumnOptions>
+        <ToolBarContent>
+            <MudText Typo="Typo.h6">Devices<span class="ml-2" style="color: var(--mud-palette-warning);font-size: smaller;">2025</span></MudText>
+            <MudSpacer />
+            <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search" Adornment="Adornment.End" Placeholder="Filter Results"
+                          DebounceInterval="100" Variant="Variant.Outlined" Clearable />
+        </ToolBarContent>
+        <Columns>
+            <PropertyColumn Property="x => x.DeviceIdentifier" Title="#" Sortable="false" />
+            <PropertyColumn Property="x => x.DeviceName" Title="Device" Sortable="false" Filterable="true" />
+            <PropertyColumn Property="x => x.GroupName" Title="Group" Sortable="true" Filterable="true" />
+            <PropertyColumn Property="@(x => x.CreatedOn.ToString("dd-MMM-yyyy HH:mm"))" Title="Created On" Sortable="true" />
+        </Columns>
+    </MudDataGrid>
+</AppPage>
+
+
+@code {
+    public ObservableCollection<DeviceDto>? Devices { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        Devices = new ObservableCollection<DeviceDto>((await DeviceDataService.GetAllDevicesAsync())
+        .Select(x => new DeviceDto
+        {
+            DeviceIdentifier = $"#{x.DeviceId}",
+            DeviceName = x.DeviceName,
+            GroupName = x.GroupName,
+            CreatedOn = x.CreatedOn
+        }));
+        ChangeToLoadedState();
+    }
+
+    public struct DeviceDto()
+    {
+        public required string DeviceIdentifier { get; set; }
+        public required string DeviceName { get; set; }
+        public required string GroupName { get; set; }
+        public required DateTimeOffset CreatedOn { get; set; }
+    }
+}

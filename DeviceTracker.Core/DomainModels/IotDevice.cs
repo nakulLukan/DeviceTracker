@@ -14,6 +14,8 @@ public class IotDevice : DomainBase
 
     public int GroupId { get; private set; }
 
+    public DateTimeOffset CreatedOn { get; private set; }
+
     public Group? Group { get; private set; }
 
     public IotDevice(string deviceName, Group group)
@@ -21,6 +23,7 @@ public class IotDevice : DomainBase
         Group = group;
         GroupId = group.Id;
         DeviceName = deviceName;
+        CreatedOn = DateTimeOffset.Now;
     }
 
     public void ChangeGroup(Group group)

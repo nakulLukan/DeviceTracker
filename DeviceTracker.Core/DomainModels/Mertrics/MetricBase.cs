@@ -4,7 +4,7 @@ public abstract class MetricBase : DomainBase
 {
     public long Id { get; private set; }
 
-    public required int DeviceId { get; init; }
+    public int DeviceId { get; init; }
 
     public DateTimeOffset Instant { get; set; }
 
@@ -14,9 +14,15 @@ public abstract class MetricBase : DomainBase
     {
         DeviceId = device.Id;
         Device = device;
+        Instant = DateTimeOffset.UtcNow;
     }
 
     internal MetricBase()
     {
+    }
+
+    internal void ClearReferences()
+    {
+        Device = null;
     }
 }

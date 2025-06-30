@@ -1,0 +1,8 @@
+﻿<div style="height: calc(100vh - var(--mud-appbar-height))">
+    @ChildContent
+</div>
+
+@code {
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

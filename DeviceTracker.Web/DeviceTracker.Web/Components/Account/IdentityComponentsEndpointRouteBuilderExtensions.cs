@@ -1,6 +1,6 @@
 using DeviceTracker.Web.Components.Account.Pages;
 using DeviceTracker.Web.Components.Account.Pages.Manage;
-using DeviceTracker.Web.Data;
+using DeviceTracker.Web.Data.Persistance.Identity;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Http.Extensions;

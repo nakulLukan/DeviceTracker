@@ -1,4 +1,4 @@
-using DeviceTracker.Web.Data;
+using DeviceTracker.Web.Data.Persistance.Identity;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Identity;

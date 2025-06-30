@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceTracker.Web", "Device
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceTracker.Web.Client", "DeviceTracker.Web\DeviceTracker.Web.Client\DeviceTracker.Web.Client.csproj", "{4701A108-7732-70F8-5BD0-AF8BDFCA0BDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DeviceTracker.Shared", "DeviceTracker.Contracts\DeviceTracker.Shared.csproj", "{E3F40D9F-3118-459C-8587-1DF4D1E5853D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{4701A108-7732-70F8-5BD0-AF8BDFCA0BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4701A108-7732-70F8-5BD0-AF8BDFCA0BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4701A108-7732-70F8-5BD0-AF8BDFCA0BDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3F40D9F-3118-459C-8587-1DF4D1E5853D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3F40D9F-3118-459C-8587-1DF4D1E5853D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3F40D9F-3118-459C-8587-1DF4D1E5853D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3F40D9F-3118-459C-8587-1DF4D1E5853D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

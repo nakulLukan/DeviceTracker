@@ -1,5 +1,5 @@
 ﻿using DeviceTracker.Core.Repository;
-using DeviceTracker.Web.Data;
+using DeviceTracker.Web.Data.Persistance;
 using Microsoft.EntityFrameworkCore;
 
 namespace DeviceTracker.Web.Extensions;
