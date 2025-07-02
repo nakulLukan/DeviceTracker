@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace DeviceTracker.Core.DomainModels;
-public class Group
+public class Group : DomainBase
 {
     public int Id { get; private set; }
 
@@ -16,6 +16,11 @@ public class Group
     public Group(string name)
     {
         Name = name;
+    }
+
+    public Group(int id, string name) : this(name)
+    {
+        Id = id;
     }
 
     internal Group()

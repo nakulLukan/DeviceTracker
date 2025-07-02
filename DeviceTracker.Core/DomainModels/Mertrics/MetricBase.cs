@@ -21,7 +21,7 @@ public abstract class MetricBase : DomainBase
     {
     }
 
-    internal void ClearReferences()
+    internal override void ClearReferences()
     {
         Device = null;
     }

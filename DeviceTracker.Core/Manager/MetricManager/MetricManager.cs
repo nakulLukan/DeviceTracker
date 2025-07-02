@@ -26,6 +26,14 @@ public class MetricManager
         {
             return new VoltageAndRtcMetricService(JsonSerializer.Deserialize<VoltageAndRtcMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
         }
+        else if (metricBase.Type == Shared.Enums.MetricType.LocationRelayAndBattery)
+        {
+            return new LocationRelayAndBatteryMetricService(JsonSerializer.Deserialize<LocationRelayAndBatteryMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
+        }
+        else if (metricBase.Type == Shared.Enums.MetricType.CurrentAndPower)
+        {
+            return new CurrentAndPowerMetricService(JsonSerializer.Deserialize<CurrentAndPowerMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
+        }
         else
         {
             throw new NotImplementedException();

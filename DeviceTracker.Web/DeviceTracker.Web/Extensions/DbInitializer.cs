@@ -16,6 +16,7 @@ public static class DbInitializer
                 {
                     var dbContext = (ApplicationDbContext)scope.ServiceProvider.GetRequiredService<IAppDbContextFactory>().CreateDbContext();
                     await dbContext.Database.MigrateAsync();
+                    await dbContext.Database.EnsureCreatedAsync();
                 }
             }
             catch (Exception ex)

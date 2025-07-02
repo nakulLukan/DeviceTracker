@@ -11,7 +11,7 @@ public class LocationRelayAndBatteryMetricDto : MetricBaseDto
     public required RelayMetricDto Relay { get; set; }
 
     [JsonPropertyName("PS")]
-    public required RelayMetricDto Battery { get; set; }
+    public required BatteryMetricDto Battery { get; set; }
 }
 
 public class  LocationMetricDto

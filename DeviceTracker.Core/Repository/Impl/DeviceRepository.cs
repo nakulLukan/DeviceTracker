@@ -45,8 +45,10 @@ internal class DeviceRepository : IDeviceRepository
         }
         else
         {
+            device.ClearReferences();
             _dbContext.Devices.Add(device);
             await _dbContext.SaveChangesAsync(cancellationToken);
+
             if (device.Id <= 0)
             {
                 throw new InvalidOperationException("Device ID must be greater than zero after adding a new device.");

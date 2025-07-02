@@ -2,4 +2,7 @@
 
 public abstract class DomainBase
 {
+    internal virtual void ClearReferences()
+    {
+    }
 }

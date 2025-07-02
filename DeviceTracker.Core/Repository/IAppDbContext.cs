@@ -1,6 +1,7 @@
 ﻿using DeviceTracker.Core.DomainModels;
 using DeviceTracker.Core.DomainModels.Mertrics;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace DeviceTracker.Core.Repository;
 
@@ -16,7 +17,9 @@ public interface IAppDbContext
     public DbSet<RelayMetric> RelayMetrics { get; set; }
     public DbSet<LocationMetric> LocationData { get; set; }
     public DbSet<UptimeMetric> UptimeData { get; set; }
+    public DbSet<BatteryMetric> BatteryMetrics { get; set; }
     #endregion
 
     public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+    public ChangeTracker ChangeTracker { get; }
 }

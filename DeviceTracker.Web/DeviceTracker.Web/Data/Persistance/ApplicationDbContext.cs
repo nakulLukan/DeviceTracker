@@ -1,9 +1,11 @@
+using DeviceTracker.Core.Constants;
 using DeviceTracker.Core.DomainModels;
 using DeviceTracker.Core.DomainModels.Mertrics;
 using DeviceTracker.Core.Repository;
 using DeviceTracker.Web.Data.Persistance.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Reflection;
 
 namespace DeviceTracker.Web.Data.Persistance;
@@ -20,6 +22,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
     public DbSet<RelayMetric> RelayMetrics { get; set; }
     public DbSet<LocationMetric> LocationData { get; set; }
     public DbSet<UptimeMetric> UptimeData { get; set; }
+    public DbSet<BatteryMetric> BatteryMetrics { get; set; }
     #endregion
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
@@ -28,6 +31,15 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         base.OnConfiguring(optionsBuilder);
+        optionsBuilder.UseAsyncSeeding(async (context, _, cancellationToken)  =>
+        {
+            var record = await context.Set<Group>().FirstOrDefaultAsync(x => x.Id == GroupConstants.DefaultGroup.Id, cancellationToken);
+            if (record == null)
+            {
+                context.Set<Group>().Add(GroupConstants.DefaultGroup);
+                context.SaveChanges();
+            }
+        });
     }
 
     protected override void OnModelCreating(ModelBuilder builder)
@@ -45,4 +57,6 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbCo
     {
         return base.SaveChangesAsync(cancellationToken);
     }
+
+    public override ChangeTracker ChangeTracker => base.ChangeTracker;
 }
