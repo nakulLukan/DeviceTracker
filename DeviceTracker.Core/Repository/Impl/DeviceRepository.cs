@@ -7,17 +7,21 @@ namespace DeviceTracker.Core.Repository.Impl;
 internal class DeviceRepository : IDeviceRepository
 {
     private readonly IAppDbContext _dbContext;
+    private readonly IAppDbContextFactory _dbContextFactory;
 
     public DeviceRepository(IAppDbContextFactory dbContext)
     {
+        _dbContextFactory = dbContext;
         _dbContext = dbContext.CreateDbContext();
     }
 
-    public Task<IotDevice> GetDeviceByName(string deviceName)
+    public async Task<IotDevice> GetDeviceByName(string deviceName)
     {
-        return _dbContext.Devices
+        var device = await _dbContext.Devices
             .Where(x => x.DeviceName == deviceName)
             .FirstAsync();
+        device.RegisterRepository(this);
+        return device;
     }
 
     public async Task<IotDevice[]> GetAllDevices(CancellationToken cancellationToken)
@@ -66,8 +70,61 @@ internal class DeviceRepository : IDeviceRepository
             .ToArrayAsync(cancellationToken);
     }
 
+    public async Task<VoltageMetric?> GetLatestVoltageMetric(IotDevice device, CancellationToken cancellationToken)
+    {
+        return await _dbContext.VoltageMetrics
+            .Where(x => x.DeviceId == device.Id)
+            .OrderByDescending(x => x.Id)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public Task Save()
     {
         return _dbContext.SaveChangesAsync();
+    }
+
+    public async Task<CurrentMetric?> GetLatestCurrentMetric(IotDevice device, CancellationToken cancellationToken)
+    {
+        return await _dbContext.CurrentMetrics
+           .Where(x => x.DeviceId == device.Id)
+           .OrderByDescending(x => x.Id)
+           .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<PowerMetric?> GetLatestPowerMetric(IotDevice device, CancellationToken cancellationToken)
+    {
+        return await _dbContext.PowerMetrics
+           .Where(x => x.DeviceId == device.Id)
+           .OrderByDescending(x => x.Id)
+           .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<RelayMetric?> GetLatestRelayMetric(IotDevice device, CancellationToken cancellationToken)
+    {
+        return await _dbContext.RelayMetrics
+           .Where(x => x.DeviceId == device.Id)
+           .OrderByDescending(x => x.Id)
+           .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<BatteryMetric?> GetLatestBatteryMetric(IotDevice device, CancellationToken cancellationToken)
+    {
+        return await _dbContext.BatteryMetrics
+           .Where(x => x.DeviceId == device.Id)
+           .OrderByDescending(x => x.Id)
+           .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<LocationMetric?> GetLatestLocationMetric(IotDevice device, CancellationToken cancellationToken)
+    {
+        return await _dbContext.LocationData
+           .Where(x => x.DeviceId == device.Id)
+           .OrderByDescending(x => x.Id)
+           .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public IDeviceRepository SpawnRepository()
+    {
+        return new DeviceRepository(_dbContextFactory);
     }
 }

@@ -1,6 +1,7 @@
 ﻿@page "/devices"
 @layout MainLayout
 @inherits AppComponentBase
+@using DeviceTracker.Web.Client.Components.Controls.Card
 @using DeviceTracker.Web.Client.Components.Layout
 @using DeviceTracker.Web.Client.Contracts.Data.Api
 @using System.Collections.ObjectModel
@@ -8,41 +9,64 @@
 @rendermode InteractiveServer
 
 <AppPage>
-    <MudDataGrid T="DeviceDto"
-        Items="@Devices"
-        SortMode="SortMode.Single"
-        Loading="@_isLoading"
-        Height="100%" 
-        Class="mt-5"
-    Striped
-    Dense
-    Hover
-    Bordered
-    ShowColumnOptions>
-        <ToolBarContent>
-            <MudText Typo="Typo.h6">Devices<span class="ml-2" style="color: var(--mud-palette-warning);font-size: smaller;">2025</span></MudText>
-            <MudSpacer />
-            <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search" Adornment="Adornment.End" Placeholder="Filter Results"
-                          DebounceInterval="100" Variant="Variant.Outlined" Clearable />
-        </ToolBarContent>
-        <Columns>
-            <PropertyColumn Property="x => x.DeviceIdentifier" Title="#" Sortable="false" />
-            <PropertyColumn Property="x => x.DeviceName" Title="Device" Sortable="false" Filterable="true" />
-            <PropertyColumn Property="x => x.GroupName" Title="Group" Sortable="true" Filterable="true" />
-            <PropertyColumn Property="@(x => x.CreatedOn.ToString("dd-MMM-yyyy HH:mm"))" Title="Created On" Sortable="true" />
-        </Columns>
-    </MudDataGrid>
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+        <div class="d-flex flex-column pt-4 gap-4">
+            <h6>Device Dashboard</h6>
+            <div class="d-flex justify-space-between flex-grow-1 gap-3 flex-wrap">
+                
+                <div class="flex-grow-1">
+                    <DeviceMetricsDetailComponent SelectedDevice="@_selectedDevice" />
+                </div>
+                <SingleContentCard Class="flex-grow-1">
+                    <h6>Available Devices</h6>
+                    <MudDataGrid Outlined=false Elevation=0 T="DeviceListItemDto"
+                                 Items="@_devices"
+                                 SortMode="SortMode.Single"
+                                 Loading="@_isLoading"
+                                 Height="100%"
+                                 Class="mt-5"
+                                 Striped
+                                 Dense
+                                 Hover
+                                 Bordered
+                                 ShowColumnOptions
+                                 RowClick="OnRowClicked"
+                                 RowClass="cursor-pointer">
+                        <ToolBarContent>
+                            <div class="d-flex gap-2">
+                                <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search"
+                                              Adornment="Adornment.End" Placeholder="Filter Results"
+                                              DebounceInterval="100"
+                                              Variant="Variant.Outlined"
+                                              Clearable @bind-Value="_searchText" />
+                                <MudButton Size="Size.Large">Search</MudButton>
+                            </div>
+
+                        </ToolBarContent>
+                        <Columns>
+                            <PropertyColumn Property="x => x.DeviceIdentifier" Title="#" Sortable="false" />
+                            <PropertyColumn Property="x => x.DeviceName" Title="Device" Sortable="false" Filterable="true" />
+                            <PropertyColumn Property="x => x.GroupName" Title="Group" Sortable="true" Filterable="true" />
+                            <PropertyColumn Property="@(x => x.CreatedOn.ToString("dd-MMM-yyyy HH:mm"))" Title="Created On" Sortable="true" />
+                        </Columns>
+                    </MudDataGrid>
+                </SingleContentCard>
+            </div>
+        </div>
+    </MudContainer>
 </AppPage>
 
 
 @code {
-    public ObservableCollection<DeviceDto>? Devices { get; set; }
+    private ObservableCollection<DeviceListItemDto>? _devices { get; set; }
 
+    private DeviceListItemDto? _selectedDevice;
+    private string? _searchText;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!firstRender) return;
-        Devices = new ObservableCollection<DeviceDto>((await DeviceDataService.GetAllDevicesAsync())
-        .Select(x => new DeviceDto
+        _devices = new ObservableCollection<DeviceListItemDto>((await DeviceDataService.GetAllDevicesAsync())
+        .Select(x => new DeviceListItemDto
         {
             DeviceIdentifier = $"#{x.DeviceId}",
             DeviceName = x.DeviceName,
@@ -52,11 +76,8 @@
         ChangeToLoadedState();
     }
 
-    public struct DeviceDto()
+    private void OnRowClicked(DataGridRowClickEventArgs<DeviceListItemDto> arg)
     {
-        public required string DeviceIdentifier { get; set; }
-        public required string DeviceName { get; set; }
-        public required string GroupName { get; set; }
-        public required DateTimeOffset CreatedOn { get; set; }
+        _selectedDevice = arg.Item;
     }
 }

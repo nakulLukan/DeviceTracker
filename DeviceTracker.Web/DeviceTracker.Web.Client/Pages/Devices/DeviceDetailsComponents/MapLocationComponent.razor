@@ -1,0 +1,46 @@
+﻿@if (_src == null)
+{
+    <MudSkeleton> </MudSkeleton>
+}
+else
+{
+    <iframe
+            style="border:0; border-radius: 16px;"
+            loading="lazy"
+            allowfullscreen
+            referrerpolicy="no-referrer-when-downgrade"
+            class="@Class"
+            src="@_src">
+    </iframe>
+}
+@code {
+    [Parameter, EditorRequired]
+    public MapLocation_Location Loc { get; set; }
+    MapLocation_Location? _lastLoc;
+
+    [Parameter]
+    public string? Class { get; set; }
+
+    private string? _src;
+
+    public class MapLocation_Location
+    {
+        public double Lat { get; set; }
+        public double Lng { get; set; }
+
+        public MapLocation_Location(double lat, double lng)
+        {
+            Lat = lat;
+            Lng = lng;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        if (_lastLoc != Loc)
+        {
+            _lastLoc = Loc;
+            _src = $"https://www.google.com/maps?q={Loc.Lat},{Loc.Lng}&hl=en&z=14&output=embed";
+        }
+    }
+}

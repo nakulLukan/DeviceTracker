@@ -1,7 +1,7 @@
 ﻿using DeviceTracker.Core.DomainModels.Mertrics;
 
 namespace DeviceTracker.Core.Repository.Contracts;
-public interface IMetricRepository : IRepositoryBase
+public interface IMetricRepository : IRepositoryBase<IMetricRepository>
 {
     public void AddVoltageMetric(VoltageMetric metric);
     public void AddLocationMetric(LocationMetric metric);

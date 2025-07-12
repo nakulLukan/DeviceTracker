@@ -1,0 +1,13 @@
+﻿<div class="card pa-4" style="background-color: @BgColorHex">
+    <div class="d-flex flex-column">
+        <h6>@Title</h6>
+        <h2 class="py-3">@Value</h2>
+    </div>
+</div>
+@code {
+    [Parameter, EditorRequired] public required string Title { get; set; }
+    [Parameter, EditorRequired] public required string Value { get; set; }
+
+    [Parameter]
+    public string? BgColorHex { get; set; }
+}

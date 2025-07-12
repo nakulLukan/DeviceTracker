@@ -5,9 +5,11 @@ namespace DeviceTracker.Core.Repository.Impl;
 internal class MetricRepository : IMetricRepository
 {
     private readonly IAppDbContext _dbContext;
+    private readonly IAppDbContextFactory _dbContextFactory;
 
     public MetricRepository(IAppDbContextFactory dbContext)
     {
+        _dbContextFactory = dbContext;
         _dbContext = dbContext.CreateDbContext();
     }
 
@@ -56,5 +58,10 @@ internal class MetricRepository : IMetricRepository
     public Task Save()
     {
         return _dbContext.SaveChangesAsync();
+    }
+
+    public IMetricRepository SpawnRepository()
+    {
+        return new MetricRepository(_dbContextFactory);
     }
 }
