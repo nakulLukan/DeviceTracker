@@ -1,4 +1,6 @@
 ﻿using DeviceTracker.Core.Constants;
+using DeviceTracker.Core.Contracts;
+using DeviceTracker.Shared.Dto.ChannelPayload;
 using MediatR;
 using MQTTnet;
 using MQTTnet.Packets;
@@ -7,7 +9,7 @@ using System.Text;
 
 namespace DeviceTracker.Web.Data.Mqtt;
 
-public class AppMqttChannel
+public class AppMqttChannel : IMqttChannel
 {
     private readonly IMqttClient _mqttClient;
     private readonly MqttClientFactory _factory;
@@ -20,10 +22,10 @@ public class AppMqttChannel
         _factory = new MqttClientFactory();
         _mqttClient = _factory.CreateMqttClient();
 
-        _mqttClient.ConnectedAsync += async e =>
+        _mqttClient.ConnectedAsync += e =>
         {
             Console.WriteLine("Connected to MQTT broker.");
-            // Subscribe to a topic or perform other actions after connecting
+            return Task.CompletedTask;
         };
 
 
@@ -68,7 +70,7 @@ public class AppMqttChannel
 
     private async Task MessageReceived(MqttApplicationMessageReceivedEventArgs e)
     {
-        if (e.ApplicationMessage.Topic != "PowerData") ;
+        if (e.ApplicationMessage.Topic != "PowerData") return;
         using (var scope = _serviceProvider.CreateScope())
         {
             var mediator = scope.ServiceProvider.GetRequiredService<IMediator>();
@@ -79,5 +81,16 @@ public class AppMqttChannel
             }, CancellationToken.None);
 
         }
+    }
+
+    public async Task<bool> PublishMessage(string deviceName, ChannelPayloadBaseDto payload, CancellationToken cancellationToken = default)
+    {
+        var applicationMessage = new MqttApplicationMessageBuilder()
+                .WithTopic($"ControlData:{deviceName}")
+                .WithPayload(payload.SerializePayload())
+                .Build();
+
+        var result = await _mqttClient.PublishAsync(applicationMessage, cancellationToken);
+        return result.IsSuccess;
     }
 }

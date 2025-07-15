@@ -1,4 +1,5 @@
 ﻿using DeviceTracker.Core.Requests.Device;
+using DeviceTracker.Core.Requests.Metric;
 using DeviceTracker.Shared.RequestDto;
 using DeviceTracker.Web.Client.Contracts.Data.Api;
 using MediatR;
@@ -22,5 +23,10 @@ public class DeviceDataService : IDeviceDataService
     public async Task<LatestMetricResponseDto> GetDeviceLatestMetricQuery(string deviceName, CancellationToken cancellationToken = default)
     {
         return await _mediator.Send(new GetDeviceLatestMetricQuery() { DeviceName = deviceName }, cancellationToken);
+    }
+
+    public async Task<ResponseData<bool>> PublishAllMetricFetchRequest(string deviceName, CancellationToken cancellationToken = default)
+    {
+        return await _mediator.Send(new PublishAllMetricsFetchRequest() { DeviceName = deviceName }, cancellationToken);
     }
 }

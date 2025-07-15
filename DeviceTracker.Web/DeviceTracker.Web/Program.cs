@@ -1,3 +1,4 @@
+using DeviceTracker.Core.Contracts;
 using DeviceTracker.Web;
 using DeviceTracker.Web.Data.Mqtt;
 using DeviceTracker.Web.Extensions;
@@ -35,6 +36,6 @@ app.MapRazorComponents<DeviceTracker.Web.Components.App>()
 
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
-await app.Services.GetRequiredService<AppMqttChannel>().InitChannelAsync();
+await ((AppMqttChannel)app.Services.GetRequiredService<IMqttChannel>()).InitChannelAsync();
 
 app.Run();

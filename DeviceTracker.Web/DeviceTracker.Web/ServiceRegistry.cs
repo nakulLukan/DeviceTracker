@@ -1,5 +1,6 @@
 ﻿using DeviceTracker.Core;
 using DeviceTracker.Core.Constants;
+using DeviceTracker.Core.Contracts;
 using DeviceTracker.Core.Repository;
 using DeviceTracker.Core.Requests.Device;
 using DeviceTracker.Web.Client.Contracts.Data.Api;
@@ -37,7 +38,7 @@ public static class ServiceRegistry
 
     private static void AddAppServices(IServiceCollection services)
     {
-        services.AddSingleton(typeof(AppMqttChannel));
+        services.AddSingleton<IMqttChannel, AppMqttChannel>();
         services.AddTransient<IDeviceDataService, DeviceDataService>();
     }
 
