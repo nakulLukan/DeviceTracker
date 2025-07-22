@@ -21,7 +21,7 @@ public class CurrentAndPowerMetricService : MetricBaseService<CurrentAndPowerMet
         var powerMetric = new PowerMetric(device, Data.Power.P1, Data.Power.P2, Data.Power.P3);
         MetricRepository.AddPowerMetric(powerMetric);
 
-        var uptimeMetric = new UptimeMetric(device, new TimeOnly(Data.Uptime.Hr, Data.Uptime.Min));
+        var uptimeMetric = new UptimeMetric(device, Data.IsGeneratorRunning);
         MetricRepository.AddUptimeMetric(uptimeMetric);
 
         await MetricRepository.Save();

@@ -4,6 +4,13 @@ using DeviceTracker.Core.DomainModels.Mertrics;
 namespace DeviceTracker.Core.Repository.Contracts;
 public interface IDeviceRepository : IRepositoryBase<IDeviceRepository>
 {
+
+    /// <summary>
+    /// Function to check if a device with the given name exists in the database.
+    /// </summary>
+    /// <param name="deviceName"></param>
+    /// <returns></returns>
+    public Task<bool> DeviceExists(string deviceName);
     public Task<IotDevice> GetDeviceByName(string deviceName);
     public Task<IotDevice[]> GetAllDevices(CancellationToken cancellationToken);
     public Task<IotDevice[]> GetAllDevicesInAGroup(Group group, CancellationToken cancellationToken);
@@ -15,4 +22,5 @@ public interface IDeviceRepository : IRepositoryBase<IDeviceRepository>
     public Task<RelayMetric?> GetLatestRelayMetric(IotDevice device, CancellationToken cancellationToken);
     public Task<BatteryMetric?> GetLatestBatteryMetric(IotDevice device, CancellationToken cancellationToken);
     public Task<LocationMetric?> GetLatestLocationMetric(IotDevice device, CancellationToken cancellationToken);
+    public Task<ExternalInterruptMetric?> GetExternalInterruptMetric(IotDevice device, CancellationToken cancellationToken);
 }

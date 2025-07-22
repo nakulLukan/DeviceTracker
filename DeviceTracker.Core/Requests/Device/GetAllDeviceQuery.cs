@@ -1,12 +1,13 @@
 ﻿using DeviceTracker.Core.Repository.Contracts;
 using DeviceTracker.Shared.RequestDto;
+using FluentResults;
 using MediatR;
 
 namespace DeviceTracker.Core.Requests.Device;
-public class GetAllDeviceQuery : IRequest<GetAllDeviceQueryResponseDto[]>
+public class GetAllDeviceQuery : IRequest<Result<GetAllDeviceQueryResponseDto[]>>
 {
 }
-internal class GetAllDeviceQueryHandler : IRequestHandler<GetAllDeviceQuery, GetAllDeviceQueryResponseDto[]>
+internal class GetAllDeviceQueryHandler : IRequestHandler<GetAllDeviceQuery, Result<GetAllDeviceQueryResponseDto[]>>
 {
     private readonly IDeviceRepository _deviceRepository;
 
@@ -15,7 +16,7 @@ internal class GetAllDeviceQueryHandler : IRequestHandler<GetAllDeviceQuery, Get
         _deviceRepository = deviceRepository;
     }
 
-    public async Task<GetAllDeviceQueryResponseDto[]> Handle(GetAllDeviceQuery request, CancellationToken cancellationToken)
+    public async Task<Result<GetAllDeviceQueryResponseDto[]>> Handle(GetAllDeviceQuery request, CancellationToken cancellationToken)
     {
         var devices = await _deviceRepository.GetAllDevices(cancellationToken);
         var response = devices.Select(device => new GetAllDeviceQueryResponseDto

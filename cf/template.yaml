@@ -1,0 +1,162 @@
+Parameters:
+  DeployedRegion:
+    Description: Choose a region
+    Type: String
+    AllowedValues:
+      - ap-south-1
+    Default: ap-south-1
+    
+  EC2InstanceTypeParam:
+    Description: Choose an instance type
+    Type: String
+    AllowedValues:
+      - t3.micro
+      - t3.small
+      - t3.medium
+      - t4g.medium
+    Default: t4g.medium
+  
+  DbInstanceIdentifier:
+    Description: RDS Postgres DB identifier
+    Type: String
+    Default: trackerdb
+  
+  DbName:
+    Description: RDS Postgres DB name
+    Type: String
+    Default: tracker
+
+  DbUsername:
+    NoEcho: True
+    Type: String
+    Description: RDS Postgres DB username
+    Default: postgres
+  
+  DbPassword:
+    NoEcho: True
+    Type: String
+    Description: RDS Postgres DB password
+
+  DbAllocatedStorage:
+    Description: RDS Postgres DB allocated storage in gigabytes
+    Type: Number
+    Default: 20
+ 
+  DbInstanceClass:
+    Description: RDS Postgres DB instance type for the RDS instance
+    Type: String
+    Default: db.t4g.small
+  
+
+Mappings:
+  # Region mapping for choosing the EC2 instance image.
+  RegionMapping:
+    ap-south-1:
+      ImageId: ami-03e81965fd8e52909
+  
+Resources:
+  KeyPairForEC2:
+    Type: AWS::EC2::KeyPair
+    Properties: 
+      KeyName: SSH Putty Connection to EC2WebServer
+      PublicKeyMaterial: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDFY5RSp3o1O6p3F9+0yH741B0iRFsoHQ74S842T4mCcn7ej4/06ubaLW3ugeSjECZeakc65tOuu2A8371wAZezON7L8Qu/O7ueyb2duo8g7M25QuvfnjUWYwe2TSO8qsQsOD48u4JE7pgDHoNYHtp5GzzlufjPA0XsTYpjf7MN/MBoLbxb/qw48mHH915o0DpKqSQvW6JfxhAZ1BBGF0lvSZabApZXfeKNbkP7MjOjoZtxiqjeFHpfKXXlnWHuftlnlvPmQv55LJAni6DA+5LxalQnSJ59ORySiG6JNkc/CvTqwpyPfZDQjA8qdaLxTWirWpnNGc5L94rYwd0G1fRt rsa-key-20250721
+
+  EC2WebServer:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap [RegionMapping, !Ref DeployedRegion, ImageId]
+      InstanceType: !Ref EC2InstanceTypeParam
+      SecurityGroups:
+        - !Ref SSHSecurityGroup
+      KeyName:
+        Ref: KeyPairForEC2
+      IamInstanceProfile: !Ref EC2InstanceProfile
+
+  SSHSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "Security group for ssh, http and https"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+          CidrIp: 0.0.0.0/0
+
+  WebServerIAMRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: "WebServerIAMRole"
+      Description: "IAM Role used by the webserver with full access for ec2 instance, RDS full access"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/AmazonRDSFullAccess"
+
+  EC2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - !Ref WebServerIAMRole
+            
+  RdsDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: !Ref DbInstanceIdentifier
+      DBName: !Ref DbName
+      Engine: postgres
+      MasterUsername: !Ref DbUsername
+      MasterUserPassword: !Ref DbPassword
+      AllocatedStorage: !Ref DbAllocatedStorage
+      DBInstanceClass: !Ref DbInstanceClass
+      EngineVersion: '16.3'
+      StorageType: gp2
+      MultiAZ: false
+      PubliclyAccessible: false
+      BackupRetentionPeriod: 0
+      StorageEncrypted: false
+      VPCSecurityGroups:
+        - !GetAtt RDSSecurityGroup.GroupId
+    DeletionPolicy: Delete
+  
+    
+  RDSSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Allow access to RDS from EC2 instances
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          SourceSecurityGroupId: !GetAtt SSHSecurityGroup.GroupId
+  
+Outputs:
+  RDSInstanceEndpoint:
+    Description: RDS PostgreSQL Instance Endpoint
+    Value: !GetAtt RdsDB.Endpoint.Address
+    Export:
+      Name: RDSInstanceEndpoint
+  JCPublicIPEC2WebServer:
+    Description: Public IP address of Webserver
+    Value: !Join 
+      - ''
+      - - !GetAtt 
+          - EC2WebServer
+          - PublicIp
+    Export: 
+      Name: EC2WebServerPublicIp
+  

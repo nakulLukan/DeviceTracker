@@ -15,6 +15,16 @@ internal class DeviceRepository : IDeviceRepository
         _dbContext = dbContext.CreateDbContext();
     }
 
+    /// <summary>
+    /// Function to check if a device with the given name exists in the database.
+    /// </summary>
+    /// <param name="deviceName"></param>
+    /// <returns></returns>
+    public async Task<bool> DeviceExists(string deviceName)
+    {
+        return await _dbContext.Devices.AnyAsync(x => x.DeviceName == deviceName);
+    }
+
     public async Task<IotDevice> GetDeviceByName(string deviceName)
     {
         var device = await _dbContext.Devices
@@ -118,6 +128,14 @@ internal class DeviceRepository : IDeviceRepository
     public async Task<LocationMetric?> GetLatestLocationMetric(IotDevice device, CancellationToken cancellationToken)
     {
         return await _dbContext.LocationData
+           .Where(x => x.DeviceId == device.Id)
+           .OrderByDescending(x => x.Id)
+           .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<ExternalInterruptMetric?> GetExternalInterruptMetric(IotDevice device, CancellationToken cancellationToken)
+    {
+        return await _dbContext.ExternalInterrupts
            .Where(x => x.DeviceId == device.Id)
            .OrderByDescending(x => x.Id)
            .FirstOrDefaultAsync(cancellationToken);

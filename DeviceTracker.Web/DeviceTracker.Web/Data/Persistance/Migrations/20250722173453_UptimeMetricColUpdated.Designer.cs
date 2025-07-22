@@ -3,6 +3,7 @@ using System;
 using DeviceTracker.Web.Data.Persistance;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DeviceTracker.Web.Data.Persistance.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250722173453_UptimeMetricColUpdated")]
+    partial class UptimeMetricColUpdated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -124,39 +127,6 @@ namespace DeviceTracker.Web.Data.Persistance.Migrations
                     b.HasIndex("DeviceId");
 
                     b.ToTable("CurrentMetrics");
-                });
-
-            modelBuilder.Entity("DeviceTracker.Core.DomainModels.Mertrics.ExternalInterruptMetric", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<int>("DeviceId")
-                        .HasColumnType("integer");
-
-                    b.Property<bool>("E1")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("E2")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("E3")
-                        .HasColumnType("boolean");
-
-                    b.Property<bool>("E4")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTimeOffset>("Instant")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DeviceId");
-
-                    b.ToTable("ExternalInterrupts");
                 });
 
             modelBuilder.Entity("DeviceTracker.Core.DomainModels.Mertrics.LocationMetric", b =>
@@ -516,17 +486,6 @@ namespace DeviceTracker.Web.Data.Persistance.Migrations
                 });
 
             modelBuilder.Entity("DeviceTracker.Core.DomainModels.Mertrics.CurrentMetric", b =>
-                {
-                    b.HasOne("DeviceTracker.Core.DomainModels.IotDevice", "Device")
-                        .WithMany()
-                        .HasForeignKey("DeviceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Device");
-                });
-
-            modelBuilder.Entity("DeviceTracker.Core.DomainModels.Mertrics.ExternalInterruptMetric", b =>
                 {
                     b.HasOne("DeviceTracker.Core.DomainModels.IotDevice", "Device")
                         .WithMany()

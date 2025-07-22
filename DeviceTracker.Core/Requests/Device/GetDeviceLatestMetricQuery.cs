@@ -1,15 +1,16 @@
 ﻿using DeviceTracker.Core.DomainModels.Mertrics;
 using DeviceTracker.Core.Repository.Contracts;
 using DeviceTracker.Shared.RequestDto;
+using FluentResults;
 using MediatR;
 
 namespace DeviceTracker.Core.Requests.Device;
-public class GetDeviceLatestMetricQuery : IRequest<LatestMetricResponseDto>
+public class GetDeviceLatestMetricQuery : IRequest<Result<LatestMetricResponseDto>>
 {
     public required string DeviceName { get; set; }
 }
 
-public class GetDeviceLatestMetricQueryHandler : IRequestHandler<GetDeviceLatestMetricQuery, LatestMetricResponseDto>
+public class GetDeviceLatestMetricQueryHandler : IRequestHandler<GetDeviceLatestMetricQuery, Result<LatestMetricResponseDto>>
 {
     private readonly IDeviceRepository _deviceRepository;
 
@@ -18,7 +19,7 @@ public class GetDeviceLatestMetricQueryHandler : IRequestHandler<GetDeviceLatest
         _deviceRepository = deviceRepository;
     }
 
-    public async Task<LatestMetricResponseDto> Handle(GetDeviceLatestMetricQuery request, CancellationToken cancellationToken)
+    public async Task<Result<LatestMetricResponseDto>> Handle(GetDeviceLatestMetricQuery request, CancellationToken cancellationToken)
     {
         var device = await _deviceRepository.GetDeviceByName(request.DeviceName);
         var deviceMetrics = await device.GetAllLatestMetrics(cancellationToken);

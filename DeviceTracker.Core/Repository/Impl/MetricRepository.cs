@@ -55,6 +55,12 @@ internal class MetricRepository : IMetricRepository
         _dbContext.UptimeData.Add(metric);
     }
 
+    public void AddExternalInterruptMetric(ExternalInterruptMetric metric)
+    {
+        metric.ClearReferences();
+        _dbContext.ExternalInterrupts.Add(metric);
+    }
+
     public Task Save()
     {
         return _dbContext.SaveChangesAsync();

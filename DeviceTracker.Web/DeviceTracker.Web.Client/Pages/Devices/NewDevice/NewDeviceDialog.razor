@@ -1,0 +1,71 @@
+﻿@using System.ComponentModel.DataAnnotations
+@using DeviceTracker.Web.Client.Contracts.Data.Api
+@using DeviceTracker.Web.Client.Contracts.Presentation
+@inject IDeviceDataService DeviceDataService
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge">
+    <EditForm Model="_model" OnValidSubmit="OnValidSubmit">
+        <DataAnnotationsValidator />
+        <MudDialog Class="rounded-xl" ContentClass="pa-2 pt-4 rounded-xl" Style="min-width: 400px;">
+            <DialogContent>
+                <div class="d-flex flex-column">
+                    <h4>Register</h4>
+                    <MudTextField Class="mt-1"
+                                  Label="Device Name"
+                                  Margin="Margin.Dense"
+                                  HelperText="Device name should be unique"
+                                  @bind-Value="@_model.DeviceName"
+                                  For="@(() => _model.DeviceName)"></MudTextField>
+
+                    @if (_serverErrorMessage != null)
+                    {
+                        <MudAlert Severity="Severity.Error">@_serverErrorMessage</MudAlert>
+                    }
+                    <div class="d-flex flex-column">
+
+                        <MudButton ButtonType="ButtonType.Submit"
+                                   Variant="Variant.Filled"
+                                   Color="Color.Primary"
+                                   Class="mt-2">Add Device</MudButton>
+                        <MudButton ButtonType="ButtonType.Button"
+                                   OnClick="Cancel"
+                                   Variant="Variant.Text"
+                                   Color="Color.Error"
+                                   Class="mt-2">Cancel</MudButton>
+                    </div>
+                </div>
+
+            </DialogContent>
+        </MudDialog>
+    </EditForm>
+</MudContainer>
+
+@code {
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+
+    private void Cancel() => MudDialog!.Cancel();
+
+    FormModel _model = new();
+    string? _serverErrorMessage = null;
+    private async Task OnValidSubmit()
+    {
+        _serverErrorMessage = null;
+        var result = await DeviceDataService.RegisterNewDevice(_model.DeviceName!);
+        if (result.IsSuccess)
+        {
+            MudDialog!.Close(DialogResult.Ok(true));
+            return;
+        }
+        else if (result.HasError(x => x.Message == "DUPLICATE"))
+        {
+            _serverErrorMessage = "Device name already exists. Please choose a different name.";
+        }
+    }
+
+    public class FormModel
+    {
+        [Required(ErrorMessage = "Device Name is required.")]
+        public string? DeviceName { get; set; }
+    }
+}

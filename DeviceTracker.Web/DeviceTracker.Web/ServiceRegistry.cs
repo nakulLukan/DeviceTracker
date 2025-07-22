@@ -4,6 +4,8 @@ using DeviceTracker.Core.Contracts;
 using DeviceTracker.Core.Repository;
 using DeviceTracker.Core.Requests.Device;
 using DeviceTracker.Web.Client.Contracts.Data.Api;
+using DeviceTracker.Web.Client.Contracts.Presentation;
+using DeviceTracker.Web.Client.Impl.Presentation;
 using DeviceTracker.Web.Components.Account;
 using DeviceTracker.Web.Data.Api;
 using DeviceTracker.Web.Data.Mqtt;
@@ -40,6 +42,7 @@ public static class ServiceRegistry
     {
         services.AddSingleton<IMqttChannel, AppMqttChannel>();
         services.AddTransient<IDeviceDataService, DeviceDataService>();
+        services.AddScoped<IAppDialogService, DialogService>();
     }
 
     private static void AddBlazor(IServiceCollection services)

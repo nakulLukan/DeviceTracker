@@ -25,26 +25,26 @@ else
             </div>
             <div class="d-flex gap-3">
                 <div class="d-flex flex-column gap-3">
-                    <MetricCard Title="Voltage V1" Value="@_latestMetric!.Voltage!.V1.ToString()" BgColorHex="#f3e8ff" />
-                    <MetricCard Title="Voltage V2" Value="@_latestMetric!.Voltage!.V2.ToString()" BgColorHex="#f3e8ff" />
-                    <MetricCard Title="Voltage V3" Value="@_latestMetric!.Voltage!.V2.ToString()" BgColorHex="#f3e8ff" />
+                    <MetricCard Title="Voltage V1" Value="@_latestMetric!.Voltage?.V1.ToString()" BgColorHex="#f3e8ff" />
+                    <MetricCard Title="Voltage V2" Value="@_latestMetric!.Voltage?.V2.ToString()" BgColorHex="#f3e8ff" />
+                    <MetricCard Title="Voltage V3" Value="@_latestMetric!.Voltage?.V2.ToString()" BgColorHex="#f3e8ff" />
                 </div>
                 <div class="d-flex flex-column gap-3">
-                    <MetricCard Title="Current I1" Value="@_latestMetric!.Current!.I1.ToString()" BgColorHex="#e0f7fa" />
-                    <MetricCard Title="Current I2" Value="@_latestMetric!.Current!.I2.ToString()" BgColorHex="#e0f7fa" />
-                    <MetricCard Title="Current I3" Value="@_latestMetric!.Current!.I3.ToString()" BgColorHex="#e0f7fa" />
+                    <MetricCard Title="Current I1" Value="@_latestMetric!.Current?.I1.ToString()" BgColorHex="#e0f7fa" />
+                    <MetricCard Title="Current I2" Value="@_latestMetric!.Current?.I2.ToString()" BgColorHex="#e0f7fa" />
+                    <MetricCard Title="Current I3" Value="@_latestMetric!.Current?.I3.ToString()" BgColorHex="#e0f7fa" />
                 </div>
                 <div class="d-flex flex-column gap-3">
-                    <MetricCard Title="Power P1" Value="@_latestMetric!.Power!.P1.ToString()" BgColorHex="#f1f8e9" />
-                    <MetricCard Title="Power P2" Value="@_latestMetric!.Power!.P2.ToString()" BgColorHex="#f1f8e9" />
-                    <MetricCard Title="Power P3" Value="@_latestMetric!.Power!.P3.ToString()" BgColorHex="#f1f8e9" />
+                    <MetricCard Title="Power P1" Value="@_latestMetric!.Power?.P1.ToString()" BgColorHex="#f1f8e9" />
+                    <MetricCard Title="Power P2" Value="@_latestMetric!.Power?.P2.ToString()" BgColorHex="#f1f8e9" />
+                    <MetricCard Title="Power P3" Value="@_latestMetric!.Power?.P3.ToString()" BgColorHex="#f1f8e9" />
                 </div>
                 <div class="d-flex flex-column gap-3">
                     <div class="d-flex gap-3">
-                        <MetricCard Title="Main Battery" Value="@_latestMetric!.Battery!.MainBattery.ToString()" BgColorHex="#fff8e1" />
-                        <MetricCard Title="Backup Battery" Value="@_latestMetric!.Battery!.BackupBattery.ToString()" BgColorHex="#fff8e1" />
-                        <MetricCard Title="SSR" Value="@_latestMetric!.Relay!.StartStopRelay.ToOnOffText()" BgColorHex="#e8f5e9" />
-                        <MetricCard Title="FCR" Value="@_latestMetric!.Relay!.FuelCutRelay.ToOnOffText()" BgColorHex="#e8f5e9" />
+                        <MetricCard Title="Main Battery" Value="@_latestMetric!.Battery?.MainBattery.ToString()" BgColorHex="#fff8e1" />
+                        <MetricCard Title="Backup Battery" Value="@_latestMetric!.Battery?.BackupBattery.ToString()" BgColorHex="#fff8e1" />
+                        <MetricCard Title="SSR" Value="@_latestMetric!.Relay?.StartStopRelay.ToOnOffText()" BgColorHex="#e8f5e9" />
+                        <MetricCard Title="FCR" Value="@_latestMetric!.Relay?.FuelCutRelay.ToOnOffText()" BgColorHex="#e8f5e9" />
 
                     </div>
                     <MapLocationComponent Loc="@_location" />
@@ -71,38 +71,47 @@ else
             if (SelectedDevice == null) return;
             _isLoading = true;
             StateHasChanged();
-            _latestMetric = await DeviceDataService.GetDeviceLatestMetricQuery(SelectedDevice.DeviceName);
-            _location = new MapLocation_Location(_latestMetric!.Location!.Lat, _latestMetric.Location.Lng);
+            var result = await DeviceDataService.GetDeviceLatestMetricQuery(SelectedDevice.DeviceName);
+            if (result.IsFailed) return;
+            UpdateMetricAndLocation(result.Value);
             _isLoading = false;
             StateHasChanged();
+        }
+    }
+
+    private void UpdateMetricAndLocation(LatestMetricResponseDto result)
+    {
+        _latestMetric = result;
+        if (_latestMetric.Location != null)
+        {
+            _location = new MapLocation_Location(_latestMetric!.Location!.Lat, _latestMetric.Location.Lng);
+        }
+        else
+        {
+            _location = MapLocation_Location.NoDataObject();
         }
     }
 
     async Task RefreshMetrics()
     {
         if (SelectedDevice == null) return;
-        _latestMetric = await DeviceDataService.GetDeviceLatestMetricQuery(SelectedDevice.DeviceName);
-        _location = new MapLocation_Location(_latestMetric!.Location!.Lat, _latestMetric.Location.Lng);
+        var result = await DeviceDataService.GetDeviceLatestMetricQuery(SelectedDevice.DeviceName);
+        if (result.IsFailed) return;
+        UpdateMetricAndLocation(result.Value);
     }
 
     async Task PublishFetchAllMetricsRequest()
     {
-        try
+        var result = await DeviceDataService.PublishAllMetricFetchRequest(SelectedDevice!.DeviceName, default);
+        if (result.IsFailed) return;
+        if (result.Value)
         {
-            var result = await DeviceDataService.PublishAllMetricFetchRequest(SelectedDevice!.DeviceName, default);
-            if (result.Data)
+            Task.Run(async () =>
             {
-                Task.Run(async () =>
-                {
-                    await Task.Delay(5000);
-                    await RefreshMetrics();
-                    await InvokeAsync(() => StateHasChanged());
-                }).CatchAndLog();
-            }
-        }
-        catch
-        {
-            
+                await Task.Delay(5000);
+                await RefreshMetrics();
+                await InvokeAsync(() => StateHasChanged());
+            }).CatchAndLog();
         }
     }
 }

@@ -34,6 +34,10 @@ public class MetricManager
         {
             return new CurrentAndPowerMetricService(JsonSerializer.Deserialize<CurrentAndPowerMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
         }
+        else if (metricBase.Type == Shared.Enums.MetricType.ExternalInterrupt)
+        {
+            return new ExternalInterruptMetricService(JsonSerializer.Deserialize<ExternalInterruptMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
+        }
         else
         {
             throw new NotImplementedException();

@@ -11,6 +11,7 @@ public interface IAppDbContext
     public DbSet<IotDevice> Devices { get; set; }
 
     #region Metrics
+    public DbSet<ExternalInterruptMetric> ExternalInterrupts { get; set; }
     public DbSet<VoltageMetric> VoltageMetrics { get; set; }
     public DbSet<CurrentMetric> CurrentMetrics { get; set; }
     public DbSet<PowerMetric> PowerMetrics { get; set; }

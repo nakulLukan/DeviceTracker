@@ -10,4 +10,5 @@ public interface IMetricRepository : IRepositoryBase<IMetricRepository>
     public void AddCurrentMetric(CurrentMetric metric);
     public void AddPowerMetric(PowerMetric metric);
     public void AddUptimeMetric(UptimeMetric metric);
+    public void AddExternalInterruptMetric(ExternalInterruptMetric metric);
 }

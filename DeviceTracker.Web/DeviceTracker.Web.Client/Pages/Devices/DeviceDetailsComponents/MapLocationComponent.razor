@@ -2,10 +2,16 @@
 {
     <MudSkeleton> </MudSkeleton>
 }
+else if(_src == string.Empty)
+{
+    <div class="h-100 d-flex flex-column justify-center align-center">
+        <MudText Typo="Typo.body2" Class="@Class">No Location Data</MudText>
+
+    </div>
+}
 else
 {
-    <iframe
-            style="border:0; border-radius: 16px;"
+    <iframe style="border:0; border-radius: 16px;"
             loading="lazy"
             allowfullscreen
             referrerpolicy="no-referrer-when-downgrade"
@@ -33,6 +39,13 @@ else
             Lat = lat;
             Lng = lng;
         }
+
+        public bool HasLocationData()
+        {
+            return Lat != 0 && Lng != 0;
+        }
+
+        public static MapLocation_Location NoDataObject() => new MapLocation_Location(0, 0);
     }
 
     protected override void OnParametersSet()
@@ -40,7 +53,7 @@ else
         if (_lastLoc != Loc)
         {
             _lastLoc = Loc;
-            _src = $"https://www.google.com/maps?q={Loc.Lat},{Loc.Lng}&hl=en&z=14&output=embed";
+            _src = Loc.HasLocationData() ? $"https://www.google.com/maps?q={Loc.Lat},{Loc.Lng}&hl=en&z=14&output=embed" : string.Empty;
         }
     }
 }

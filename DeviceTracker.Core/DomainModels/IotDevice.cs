@@ -57,6 +57,7 @@ public class IotDevice : DomainBase
         var relayMetricRepository = _repository!.SpawnRepository();
         var batteryMetricRepository = _repository!.SpawnRepository();
         var locationMetricRepository = _repository!.SpawnRepository();
+        var externalInterruptMetricRepository = _repository!.SpawnRepository();
 
         var voltageMetricTask = voltageMetricRepository!.GetLatestVoltageMetric(this, cancellationToken);
         var currentMetricTask = currentMetricRepository!.GetLatestCurrentMetric(this, cancellationToken);
@@ -64,8 +65,9 @@ public class IotDevice : DomainBase
         var relayMetricTask = relayMetricRepository!.GetLatestRelayMetric(this, cancellationToken);
         var batteryMetricTask = batteryMetricRepository!.GetLatestBatteryMetric(this, cancellationToken);
         var locationMetricTask = locationMetricRepository!.GetLatestLocationMetric(this, cancellationToken);
+        var externalInterruptMetricTask = externalInterruptMetricRepository!.GetExternalInterruptMetric(this, cancellationToken);
 
-        await Task.WhenAll(voltageMetricTask, currentMetricTask, powerMetricTask, relayMetricTask, batteryMetricTask, locationMetricTask);
-        return [voltageMetricTask.Result, currentMetricTask.Result, powerMetricTask.Result, relayMetricTask.Result, batteryMetricTask.Result, locationMetricTask.Result];
+        await Task.WhenAll(voltageMetricTask, currentMetricTask, powerMetricTask, relayMetricTask, batteryMetricTask, locationMetricTask, externalInterruptMetricTask);
+        return [voltageMetricTask.Result, currentMetricTask.Result, powerMetricTask.Result, relayMetricTask.Result, batteryMetricTask.Result, locationMetricTask.Result, externalInterruptMetricTask.Result];
     }
 }

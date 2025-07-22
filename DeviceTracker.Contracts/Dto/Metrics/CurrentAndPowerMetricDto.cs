@@ -10,8 +10,10 @@ public class CurrentAndPowerMetricDto : MetricBaseDto
     [JsonPropertyName("PW")]
     public required PowerMetricObjectDto Power { get; set; }
 
-    [JsonPropertyName("HR")]
-    public required UptimeMetricObjectDto Uptime { get; set; }
+    [JsonPropertyName("GS")]
+    public required int GeneratorRunning { get; set; }
+
+    public bool IsGeneratorRunning => GeneratorRunning == 1;
 }
 
 public class CurrentMetricObjectDto
@@ -32,12 +34,4 @@ public class PowerMetricObjectDto
     public required float P2 { get; set; }
     [JsonPropertyName("p3")]
     public required float P3 { get; set; }
-}
-
-public class UptimeMetricObjectDto
-{
-    [JsonPropertyName("hr")]
-    public required int Hr { get; set; }
-    [JsonPropertyName("min")]
-    public required int Min { get; set; }
 }

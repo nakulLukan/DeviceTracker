@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\DeviceTracker.Contracts\DeviceTracker.Shared.csproj" />
     <ProjectReference Include="..\..\DeviceTracker.Core\DeviceTracker.Core.csproj" />
     <ProjectReference Include="..\DeviceTracker.Web.Client\DeviceTracker.Web.Client.csproj" />
+    <PackageReference Include="FluentResults" Version="4.0.0" />
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.5" />
