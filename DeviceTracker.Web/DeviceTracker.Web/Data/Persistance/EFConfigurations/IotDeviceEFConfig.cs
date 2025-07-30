@@ -1,11 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DeviceTracker.Core.DomainModels.Device;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace DeviceTracker.Web.Data.Persistance.EFConfigurations;
 
-public class IotDeviceEFConfig : IEntityTypeConfiguration<Core.DomainModels.IotDevice>
+public class IotDeviceEFConfig : IEntityTypeConfiguration<IotDevice>
 {
-    public void Configure(EntityTypeBuilder<Core.DomainModels.IotDevice> builder)
+    public void Configure(EntityTypeBuilder<IotDevice> builder)
     {
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
         builder.Property(x => x.DeviceName).IsRequired();

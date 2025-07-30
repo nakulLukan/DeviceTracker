@@ -4,7 +4,10 @@
 @using DeviceTracker.Web.Client.Contracts.Data.Api
 @using DeviceTracker.Web.Client.Pages.Devices.DeviceDetailsComponents
 @using static DeviceTracker.Web.Client.Pages.Devices.DeviceDetailsComponents.MapLocationComponent
+@inherits AppComponentBase
 @inject IDeviceDataService DeviceDataService
+@inject IMetricDataService MetricDataService
+
 @if (SelectedDevice == null)
 {
     <h1>Select a Device</h1>
@@ -13,15 +16,26 @@ else
 {
     @if (_isLoading)
     {
-        <MudSkeleton Height="100" Width="100" />
+        <MudSkeleton Height="100%" Width="100%" />
     }
     else
     {
         <div class="d-flex flex-column gap-1">
+
             <div class="d-flex align-content-center gap-2">
                 <MudText Typo="Typo.h6">@SelectedDevice.DeviceName</MudText>
-                <MudIconButton Icon="@Icons.Material.Rounded.Refresh" Size="Size.Small" OnClick="RefreshMetrics" />
-                <MudButton EndIcon="@Icons.Material.Rounded.ArrowDropDown" OnClick="PublishFetchAllMetricsRequest">fetch</MudButton>
+                @if (_isDataRefreshing)
+                {
+                    <MudSkeleton Height="36.5px" Width="100%"></MudSkeleton>
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Rounded.Refresh" Size="Size.Small" OnClick="RefreshMetrics" />
+                    <MudButton EndIcon="@Icons.Material.Rounded.ArrowDropDown" OnClick="PublishFetchAllMetricsRequest">fetch</MudButton>
+                    <MudSpacer></MudSpacer>
+                    <MudButton EndIcon="@Icons.Material.Rounded.Start" OnClick="ToggleStartStopRelayRequest">Start/Stop Relay</MudButton>
+                    <MudButton EndIcon="@Icons.Material.Rounded.Start" OnClick="ToggleFuelCutRelayRequest">Fuel Cut relay</MudButton>
+                }
             </div>
             <div class="d-flex gap-3">
                 <div class="d-flex flex-column gap-3">
@@ -45,7 +59,16 @@ else
                         <MetricCard Title="Backup Battery" Value="@_latestMetric!.Battery?.BackupBattery.ToString()" BgColorHex="#fff8e1" />
                         <MetricCard Title="SSR" Value="@_latestMetric!.Relay?.StartStopRelay.ToOnOffText()" BgColorHex="#e8f5e9" />
                         <MetricCard Title="FCR" Value="@_latestMetric!.Relay?.FuelCutRelay.ToOnOffText()" BgColorHex="#e8f5e9" />
-
+                        <div class="d-flex flex-column gap-1 justify-space-around">
+                            <div class="d-flex gap-1 justify-space-around">
+                                <MetricCardSm Title="E1" Value="@_latestMetric!.ExternalInterrupt?.E1?.ToYesNoText()" BgColorHex="#fff8e1" />
+                                <MetricCardSm Title="E2" Value="@_latestMetric!.ExternalInterrupt?.E2?.ToYesNoText()" BgColorHex="#fff8e1" />
+                            </div>
+                            <div class="d-flex gap-1 justify-space-around">
+                                <MetricCardSm Title="E3" Value="@_latestMetric!.ExternalInterrupt?.E3?.ToYesNoText()" BgColorHex="#fff8e1" />
+                                <MetricCardSm Title="E4" Value="@_latestMetric!.ExternalInterrupt?.E4?.ToYesNoText()" BgColorHex="#fff8e1" />
+                            </div>
+                        </div>
                     </div>
                     <MapLocationComponent Loc="@_location" />
                 </div>
@@ -62,7 +85,9 @@ else
 
     private LatestMetricResponseDto? _latestMetric;
     private MapLocation_Location? _location;
-    private bool _isLoading;
+
+    private bool _isDataRefreshing = false;
+
     protected override async Task OnParametersSetAsync()
     {
         if (_lastSelectedDevice != SelectedDevice)
@@ -95,6 +120,7 @@ else
     async Task RefreshMetrics()
     {
         if (SelectedDevice == null) return;
+        await Delay();
         var result = await DeviceDataService.GetDeviceLatestMetricQuery(SelectedDevice.DeviceName);
         if (result.IsFailed) return;
         UpdateMetricAndLocation(result.Value);
@@ -108,10 +134,56 @@ else
         {
             Task.Run(async () =>
             {
-                await Task.Delay(5000);
+                await Delay();
                 await RefreshMetrics();
-                await InvokeAsync(() => StateHasChanged());
+                Refresh();
             }).CatchAndLog();
         }
+    }
+
+    async Task ToggleStartStopRelayRequest()
+    {
+        if (_latestMetric!.Relay == null)
+        {
+            return;
+        }
+        var result = await MetricDataService.PublishToggleStartStopRelayRequest(SelectedDevice!.DeviceName, turnOn: !_latestMetric.Relay.StartStopRelay, default);
+        if (result.IsFailed) return;
+        if (result.Value)
+        {
+            Task.Run(async () =>
+            {
+                await Delay();
+                await RefreshMetrics();
+                Refresh();
+            }).CatchAndLog();
+        }
+    }
+
+    async Task ToggleFuelCutRelayRequest()
+    {
+        if (_latestMetric!.Relay == null)
+        {
+            return;
+        }
+        var result = await MetricDataService.PublishToggleFuelCutRelayRequest(SelectedDevice!.DeviceName, turnOn: !_latestMetric.Relay.FuelCutRelay, default);
+        if (result.IsFailed) return;
+        if (result.Value)
+        {
+            Task.Run(async () =>
+            {
+                await Delay();
+                await RefreshMetrics();
+                Refresh();
+            }).CatchAndLog();
+        }
+    }
+
+    async Task Delay()
+    {
+        _isDataRefreshing = true;
+        Refresh();
+        await Task.Delay(2000);
+        _isDataRefreshing = false;
     }
 }

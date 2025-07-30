@@ -8,6 +8,7 @@ public class LatestMetricResponseDto
     public LatestLocationDataDto? Location { get; set; }
     public LatestBatteryDataDto? Battery { get; set; }
     public LatestRelayMetricDto? Relay { get; set; }
+    public LatestExternalInterruptDto? ExternalInterrupt { get; set; }
 }
 
 public class LatestVoltageMetricDto
@@ -47,4 +48,12 @@ public class LatestBatteryDataDto
 {
     public float MainBattery { get; set; }
     public float BackupBattery { get; set; }
+}
+
+public class LatestExternalInterruptDto
+{
+    public bool? E1 { get; set; }
+    public bool? E2 { get; set; }
+    public bool? E3 { get; set; }
+    public bool? E4 { get; set; }
 }

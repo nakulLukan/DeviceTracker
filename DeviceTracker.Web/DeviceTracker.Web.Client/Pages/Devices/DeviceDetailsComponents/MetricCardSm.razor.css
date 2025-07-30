@@ -1,0 +1,9 @@
+﻿div > .card {
+    border: 1px solid rgba(0,0,0,0.08);
+    border-radius: 8px;
+    min-width: calc(height);
+}
+
+p{
+    margin: 0px;
+}

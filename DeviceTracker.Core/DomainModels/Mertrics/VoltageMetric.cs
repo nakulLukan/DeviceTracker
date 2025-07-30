@@ -1,4 +1,5 @@
-﻿using DeviceTracker.Core.DomainModels.Metrics;
+﻿using DeviceTracker.Core.DomainModels.Device;
+using DeviceTracker.Core.DomainModels.Metrics;
 
 namespace DeviceTracker.Core.DomainModels.Mertrics;
 public class VoltageMetric : MetricBase

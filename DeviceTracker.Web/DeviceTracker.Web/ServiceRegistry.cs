@@ -42,6 +42,7 @@ public static class ServiceRegistry
     {
         services.AddSingleton<IMqttChannel, AppMqttChannel>();
         services.AddTransient<IDeviceDataService, DeviceDataService>();
+        services.AddTransient<IMetricDataService, MetricDataDevice>();
         services.AddScoped<IAppDialogService, DialogService>();
     }
 

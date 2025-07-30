@@ -1,7 +1,7 @@
 ﻿using DeviceTracker.Core.DomainModels.Metrics;
 using DeviceTracker.Core.Repository.Contracts;
 
-namespace DeviceTracker.Core.DomainModels;
+namespace DeviceTracker.Core.DomainModels.Device;
 public class IotDevice : DomainBase
 {
     private IDeviceRepository? _repository;

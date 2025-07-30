@@ -21,7 +21,12 @@
                     <DeviceMetricsDetailComponent SelectedDevice="@_selectedDevice" />
                 </div>
                 <SingleContentCard Class="flex-grow-1">
-                    <h6>Available Devices</h6>
+                    <div class="d-flex justify-space-between">
+                        <h6>Available Devices</h6>
+                        <MudButton
+                            Variant="Variant.Outlined"
+                            StartIcon="@Icons.Material.Rounded.Add" OnClick="OpenRegisterDeviceDialogAsync">New</MudButton>
+                        </div>
                     <MudDataGrid Outlined=false Elevation=0 T="DeviceListItemDto"
                                  Items="@_devices"
                                  SortMode="SortMode.Single"
@@ -35,19 +40,6 @@
                                  ShowColumnOptions
                                  RowClick="OnRowClicked"
                                  RowClass="cursor-pointer">
-                        <ToolBarContent>
-                            <div class="d-flex gap-2">
-                                <MudTextField AdornmentIcon="@Icons.Material.Outlined.Search"
-                                              Adornment="Adornment.End" Placeholder="Filter Results"
-                                              DebounceInterval="100"
-                                              Variant="Variant.Outlined"
-                                              Clearable @bind-Value="_searchText" />
-                                <MudButton Size="Size.Large">Search</MudButton>
-                                <MudSpacer></MudSpacer>
-                                <MudButton StartIcon="@Icons.Material.Rounded.PlusOne" OnClick="OpenRegisterDeviceDialogAsync">New</MudButton>
-                            </div>
-
-                        </ToolBarContent>
                         <Columns>
                             <PropertyColumn Property="x => x.DeviceIdentifier" Title="#" Sortable="false" />
                             <PropertyColumn Property="x => x.DeviceName" Title="Device" Sortable="false" Filterable="true" />

@@ -1,4 +1,5 @@
 ﻿using DeviceTracker.Core.DomainModels;
+using DeviceTracker.Core.DomainModels.Device;
 using DeviceTracker.Core.DomainModels.Mertrics;
 using DeviceTracker.Core.Repository.Contracts;
 using Microsoft.EntityFrameworkCore;
@@ -70,6 +71,12 @@ internal class DeviceRepository : IDeviceRepository
         }
 
         return device;
+    }
+    public async Task<int> UpdateSignalLastReceivedOn(IotDeviceDetails deviceDetails, CancellationToken cancellationToken)
+    {
+        return await _dbContext.DeviceDetails
+            .Where(x => x.Id == deviceDetails.Id)
+            .ExecuteUpdateAsync(x => x.SetProperty(d => d.SignalLastReceivedOn, deviceDetails.SignalLastReceivedOn), cancellationToken);
     }
 
     public Task<VoltageMetric[]> GetAllVoltageMetrics(IotDevice device, CancellationToken cancellationToken)
@@ -144,5 +151,21 @@ internal class DeviceRepository : IDeviceRepository
     public IDeviceRepository SpawnRepository()
     {
         return new DeviceRepository(_dbContextFactory);
+    }
+
+    public async Task<IotDeviceDetails> GetDeviceDetails(IotDevice device, CancellationToken cancellationToken)
+    {
+        var entity = await _dbContext.DeviceDetails
+           .Where(x => x.DeviceId == device.Id)
+           .OrderByDescending(x => x.Id)
+           .FirstOrDefaultAsync(cancellationToken);
+        if (entity == null)
+        {
+            entity = new IotDeviceDetails(device);
+            entity.ClearReferences();
+            _dbContext.DeviceDetails.Add(entity);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+        }
+        return entity;
     }
 }

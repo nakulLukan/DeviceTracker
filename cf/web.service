@@ -1,0 +1,33 @@
+[Unit]
+Description=Tracker App
+
+[Service]
+WorkingDirectory=/var/www/release
+ExecStart=/home/ec2-user/.dotnet/dotnet /var/www/release/DeviceTracker.Web.dll
+Restart=always
+# Restart service after 10 seconds if the dotnet service crashes:
+RestartSec=10
+KillSignal=SIGINT
+SyslogIdentifier=tracker-webapp
+User=ec2-user
+
+StandardOutput=journal
+StandardError=journal
+
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_NOLOGO=true
+Environment=ASPNETCORE_URLS=http://0.0.0.0:5001
+
+# Connection string
+Environment=ConnectionStrings__DefaultConnection=""
+
+
+# Mqtt
+Environment=Mqtt__Host=""
+Environment=Mqtt__Port="8883"
+Environment=Mqtt__Username=""
+Environment=Mqtt__Password=""
+
+
+[Install]
+WantedBy=multi-user.target

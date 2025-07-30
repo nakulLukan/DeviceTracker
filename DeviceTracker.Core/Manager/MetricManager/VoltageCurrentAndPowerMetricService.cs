@@ -3,10 +3,10 @@ using DeviceTracker.Core.Repository.Contracts;
 using DeviceTracker.Shared.Dto.Metrics;
 
 namespace DeviceTracker.Core.Manager.MetricManager;
-public class CurrentAndPowerMetricService : MetricBaseService<CurrentAndPowerMetricDto>, IMetricService
+public class VoltageCurrentAndPowerMetricService : MetricBaseService<VoltageCurrentAndPowerMetricDto>, IMetricService
 {
-    public CurrentAndPowerMetricService(
-        CurrentAndPowerMetricDto data,
+    public VoltageCurrentAndPowerMetricService(
+        VoltageCurrentAndPowerMetricDto data,
         IMetricRepository metricRepository,
         IDeviceRepository deviceRepository) : base(data, metricRepository, deviceRepository)
     {
@@ -15,6 +15,9 @@ public class CurrentAndPowerMetricService : MetricBaseService<CurrentAndPowerMet
     public async Task StoreMetrics()
     {
         var device = await GetDevice();
+        var voltageMetric = new VoltageMetric(device, Data.Voltage.V1, Data.Voltage.V2, Data.Voltage.V3);
+        MetricRepository.AddVoltageMetric(voltageMetric);
+
         var currentMetric = new CurrentMetric(device, Data.Current.I1, Data.Current.I2, Data.Current.I3);
         MetricRepository.AddCurrentMetric(currentMetric);
 

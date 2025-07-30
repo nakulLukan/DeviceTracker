@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DeviceTracker.Core.DomainModels.Device;
+using System;
 
 namespace DeviceTracker.Core.DomainModels;
 public class Group : DomainBase

@@ -22,17 +22,17 @@ public class MetricManager
         }
 
         var metricBase = System.Text.Json.JsonSerializer.Deserialize<MetricBaseDto>(jsonPayload)!;
-        if (metricBase.Type == Shared.Enums.MetricType.VoltageAndRtc)
+        if (metricBase.Type == Shared.Enums.MetricType.IsAlive)
         {
-            return new VoltageAndRtcMetricService(JsonSerializer.Deserialize<VoltageAndRtcMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
+            return new IsAliveMetricService(JsonSerializer.Deserialize<IsAliveMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
         }
         else if (metricBase.Type == Shared.Enums.MetricType.LocationRelayAndBattery)
         {
             return new LocationRelayAndBatteryMetricService(JsonSerializer.Deserialize<LocationRelayAndBatteryMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
         }
-        else if (metricBase.Type == Shared.Enums.MetricType.CurrentAndPower)
+        else if (metricBase.Type == Shared.Enums.MetricType.VoltageCurrentAndPower)
         {
-            return new CurrentAndPowerMetricService(JsonSerializer.Deserialize<CurrentAndPowerMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
+            return new VoltageCurrentAndPowerMetricService(JsonSerializer.Deserialize<VoltageCurrentAndPowerMetricDto>(jsonPayload)!, _metricRepository, _deviceRepository);
         }
         else if (metricBase.Type == Shared.Enums.MetricType.ExternalInterrupt)
         {

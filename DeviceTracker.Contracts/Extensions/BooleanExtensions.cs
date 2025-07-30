@@ -6,4 +6,8 @@ public static class BooleanExtensions
     {
         return val ? "ON" : "OFF";
     }
+    public static string ToYesNoText(this bool val)
+    {
+        return val ? "Yes" : "No";
+    }
 }

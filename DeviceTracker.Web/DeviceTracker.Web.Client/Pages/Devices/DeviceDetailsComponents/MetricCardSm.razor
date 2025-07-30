@@ -1,0 +1,13 @@
+﻿<div class="card pa-1" style="background-color: @BgColorHex">
+    <div class="d-flex flex-column gap-1 align-content-center justify-center">
+        <MudText Typo="Typo.caption"><b>@Title</b></MudText>
+        <p class="py-0">@(Value != null ? Value : "-")</p>
+    </div>
+</div>
+@code {
+    [Parameter, EditorRequired] public required string Title { get; set; }
+    [Parameter, EditorRequired] public required string? Value { get; set; }
+
+    [Parameter]
+    public string? BgColorHex { get; set; }
+}

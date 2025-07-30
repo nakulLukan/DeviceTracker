@@ -1,4 +1,6 @@
-﻿namespace DeviceTracker.Core.DomainModels.Metrics;
+﻿using DeviceTracker.Core.DomainModels.Device;
+
+namespace DeviceTracker.Core.DomainModels.Metrics;
 
 public abstract class MetricBase : DomainBase
 {

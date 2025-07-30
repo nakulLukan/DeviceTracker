@@ -2,13 +2,16 @@
 
 namespace DeviceTracker.Shared.Dto.Metrics;
 
-public class CurrentAndPowerMetricDto : MetricBaseDto
+public class VoltageCurrentAndPowerMetricDto : MetricBaseDto
 {
     [JsonPropertyName("CT")]
     public required CurrentMetricObjectDto Current { get; set; }
 
     [JsonPropertyName("PW")]
     public required PowerMetricObjectDto Power { get; set; }
+
+    [JsonPropertyName("VOL")]
+    public required VoltageMetricObjectDto Voltage { get; set; }
 
     [JsonPropertyName("GS")]
     public required int GeneratorRunning { get; set; }
@@ -34,4 +37,17 @@ public class PowerMetricObjectDto
     public required float P2 { get; set; }
     [JsonPropertyName("p3")]
     public required float P3 { get; set; }
+}
+
+
+public class VoltageMetricObjectDto
+{
+    [JsonPropertyName("v1")]
+    public required float V1 { get; set; }
+
+    [JsonPropertyName("v2")]
+    public required float V2 { get; set; }
+
+    [JsonPropertyName("v3")]
+    public required float V3 { get; set; }
 }

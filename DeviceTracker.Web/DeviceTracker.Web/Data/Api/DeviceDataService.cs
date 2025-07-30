@@ -44,7 +44,8 @@ public class DeviceDataService : IDeviceDataService
     {
         try
         {
-            return await _mediator.Send(new PublishAllMetricsFetchRequest() { DeviceName = deviceName }, cancellationToken);
+            var result =  await _mediator.Send(new PublishAllMetricsFetchRequest() { DeviceName = deviceName }, cancellationToken);
+            return result;
         }
         catch (Exception)
         {

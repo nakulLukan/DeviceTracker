@@ -77,6 +77,16 @@ public class GetDeviceLatestMetricQueryHandler : IRequestHandler<GetDeviceLatest
                     Lng = locationMetric.Lng,
                 };
             }
+            else if (metric is ExternalInterruptMetric externalInterrupt)
+            {
+                result.ExternalInterrupt = new LatestExternalInterruptDto
+                {
+                    E1 = externalInterrupt.E1,
+                    E2 = externalInterrupt.E2,
+                    E3 = externalInterrupt.E3,
+                    E4 = externalInterrupt.E4
+                };
+            }
         }
 
         return result;

@@ -30,8 +30,8 @@ public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, 
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error handling {RequestName}", typeof(TRequest).Name);
+            throw;
         }
-        return default(TResponse);
     }
 
 }

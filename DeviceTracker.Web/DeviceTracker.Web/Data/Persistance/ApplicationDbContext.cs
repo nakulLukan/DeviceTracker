@@ -1,5 +1,6 @@
 using DeviceTracker.Core.Constants;
 using DeviceTracker.Core.DomainModels;
+using DeviceTracker.Core.DomainModels.Device;
 using DeviceTracker.Core.DomainModels.Mertrics;
 using DeviceTracker.Core.Repository;
 using DeviceTracker.Web.Data.Persistance.Identity;
@@ -13,7 +14,11 @@ namespace DeviceTracker.Web.Data.Persistance;
 public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IAppDbContext
 {
     public DbSet<Group> Groups { get; set; }
+
+    #region Device
     public DbSet<IotDevice> Devices { get; set; }
+    public DbSet<IotDeviceDetails> DeviceDetails { get; set; }
+    #endregion
 
     #region Metrics
     public DbSet<ExternalInterruptMetric> ExternalInterrupts { get; set; }

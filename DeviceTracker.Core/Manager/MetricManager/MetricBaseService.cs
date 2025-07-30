@@ -1,5 +1,5 @@
 ﻿using DeviceTracker.Core.Constants;
-using DeviceTracker.Core.DomainModels;
+using DeviceTracker.Core.DomainModels.Device;
 using DeviceTracker.Core.Repository.Contracts;
 using DeviceTracker.Shared.Dto.Metrics;
 
